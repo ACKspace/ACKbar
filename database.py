@@ -9,7 +9,9 @@ with open("credentials.txt", 'r') as c_fh:
 SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{username}:{password}@ackbar-vm/ackbar?charset=utf8mb4"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URI, echo=False
+    SQLALCHEMY_DATABASE_URI,
+    echo=False,
+    pool_recycle=3600
 )
 
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
