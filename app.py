@@ -52,7 +52,7 @@ def startScreen(font):
 def randomFont(session):
     return session.query(Font).order_by(func.random()).first()
 
-def performCheckout(user, products, deposit, session):
+def performCheckout(user, products, deposit, session, transfers):
     # Add the prices of all the products
     totalPrice = 0
     for product in products:
@@ -66,6 +66,9 @@ def performCheckout(user, products, deposit, session):
     else:
         user.balance += deposit
         user.balance -= totalPrice
+        
+        for transfer in transfers:
+            user.balance += transfer[0]
 
         # If cash has been deposited, we record a kas mutation
         if deposit > 0:
@@ -177,7 +180,7 @@ def main(Session):
 
                 # User wants to finish transaction
                 elif scanned.lower() == "accept":
-                    if performCheckout(users[0], products, deposit, session):
+                    if performCheckout(users[0], products, deposit, session,transfers):
                         print(succes("Transaction confirmed!"))
                         time.sleep(2)
                         userBusy = False
