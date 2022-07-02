@@ -58,17 +58,18 @@ def performCheckout(user, products, deposit, session, transfers):
     for product in products:
         totalPrice += product.price
 
+    # What balance would this checkout result in?
+    resulting_balance = user.balance + deposit - totalPrice
+    for transfer in transfers:
+        resulting_balance += transfer[0]
+
     # Can the user afford this?
-    if totalPrice > (user.balance + deposit):
+    if resulting_balance < 0:
         return False
 
     # The user has enough money and the transaction is going to be executed
     else:
-        user.balance += deposit
-        user.balance -= totalPrice
-        
-        for transfer in transfers:
-            user.balance += transfer[0]
+        user.balance = resulting_balance
 
         # If cash has been deposited, we record a kas mutation
         if deposit > 0:
