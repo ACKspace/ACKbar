@@ -33,9 +33,15 @@ def input_deposit():
     while not isValid:
         raw_money = input(question("How much money do you want to deposit: "))
         if "." in raw_money and len(raw_money.split(".")) == 2:
+            full, cents = raw_money.split(".")
             try:
-                full = int(raw_money.split(".")[0])
-                cents = int(raw_money.split(".")[1])
+                full = int(full)
+                if len(cents) == 1:
+                    cents = int(cents) * 10
+                elif len(cents) == 2:
+                    cents = int(cents)
+                else:
+                    raise Exception
             except:
                 pass
             else:
