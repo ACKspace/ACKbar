@@ -136,12 +136,14 @@ def main(Session):
 
         # User wants to upvote the logo
         elif scanned == "u":
+            font = session.query(Font).filter(Font.name==font.name).first()
             font.score += 1
             session.commit()
             font = None
 
         # User wants to downvote the logo
         elif scanned == "d":
+            font = session.query(Font).filter(Font.name==font.name).first()
             font.score -= 1
             session.commit()
             font = None
