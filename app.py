@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 from models import Base, User, Product, Barcode, Font
 from models import KasMutatie, KasMutatieSoort
 from models import BankStorting
@@ -57,7 +57,8 @@ def purchaseScreen(users, products, deposit, transfers, total, font):
 def startScreen(font):
     logo(font)
     print("")
-    print(info(f"{font.name} {font.score}"))
+    if font is not None:
+        print(info(f"{font.name} {font.score}"))
     print()
     print("Commands:")
     print("  guest - use a guest account")
