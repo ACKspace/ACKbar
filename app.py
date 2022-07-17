@@ -88,7 +88,9 @@ def performCheckout(user, products, deposit, session, transfers):
             user.balance = resulting_balance
 
         # If cash has been deposited, we record a kas mutation
-        if deposit > 0:
+        if user.name == "guest": # Guests always deposit totalPrice
+            session.add( KasMutatie(mutatiesoort=KasMutatieSoort.storting, user_id=user.id, bedrag=totalPrice) )
+        elif deposit > 0:
             session.add( KasMutatie(mutatiesoort=KasMutatieSoort.storting, user_id=user.id, bedrag=deposit) )
 
         # If products have been bought, we record a voorraad mutation
