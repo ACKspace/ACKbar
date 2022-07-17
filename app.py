@@ -186,7 +186,7 @@ def main(Session):
                 scanned = input(question("\nType command or scan product: "))
 
                 # User wants to deposit money
-                if scanned.lower() == "cash":
+                if scanned.lower() in ["cash", "deposit"]:
                     deposit += input_deposit()
 
                 # User wants to transfer money
@@ -207,7 +207,7 @@ def main(Session):
                         session.add( BankStorting(user_id=users[0].id, bedrag=bedrag, code=code) )
 
                 # User wants to finish transaction
-                elif scanned.lower() == "accept":
+                elif scanned.lower() in ["accept", "checkout"]:
                     if performCheckout(users[0], products, deposit, session,transfers):
                         print(succes("Transaction confirmed!"))
                         time.sleep(2)
@@ -217,7 +217,7 @@ def main(Session):
                         time.sleep(1)
 
                 # User wants to cancel transaction
-                elif scanned.lower() == "cancel":
+                elif scanned.lower() in ["cancel", "abort"]:
                     print(warning(f"Transaction canceled!"))
                     session.rollback()
                     userBusy = False
