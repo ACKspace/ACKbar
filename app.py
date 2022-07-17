@@ -8,6 +8,8 @@ from database import Session, engine
 import os, time
 from console import clearConsole, succes, question, info, warning, error, input_yesno, input_deposit
 
+
+
 def logo(font):
     clearConsole()
     if font is None:
@@ -18,15 +20,20 @@ def logo(font):
 def purchaseScreen(users, products, deposit, transfers, total, font):
     logo(font)
     print("")
-    print(f"Hello {users[0].name}, you have {(users[0].balance/100):.2f} on your account.")
+    if users[0].name != "guest":
+        print(f"Hello {users[0].name}, you have {(users[0].balance/100):.2f} on your account.")
+    else:
+        print(f"Hello guest!")
     print(f"")
     print(info("Commands:"))
     print(info("  accept  - Accept transaction"))
-    print(info("  bank    - Deposit with wire transfer"))
+    if users[0].name != "guest":
+        print(info("  bank    - Deposit with wire transfer"))
     print(info("  cash    - Deposit with cash"))
     print(info("  cancel  - Cancel transaction"))
     print("")
-    print(f"{'balance' : <25} {(users[0].balance/100):6.2f}")
+    if users[0].name != "guest":
+        print(f"{'balance' : <25} {(users[0].balance/100):6.2f}")
     if deposit > 0:
         print(f"{'deposit'.ljust(25)} {(deposit/100):6.2f}")
 
@@ -38,7 +45,13 @@ def purchaseScreen(users, products, deposit, transfers, total, font):
         for product in products:
             print(f"{product.name.ljust(25)} {(-product.price/100):6.2f}")
     print("-"*32)
-    print(f"{'new balance'.ljust(25)} {(total/100):6.2f}")
+    if users[0].name == "guest":
+        if total >= 0:
+            print(f"{'your change'.ljust(25)} {(total/100):6.2f}")
+        else:
+            print(f"{'please deposit'.ljust(25)} {(-total/100):6.2f}")
+    else:
+        print(f"{'new balance'.ljust(25)} {(total/100):6.2f}")
 
 def startScreen(font):
     logo(font)
@@ -46,6 +59,7 @@ def startScreen(font):
     print(info(f"{font.name} {font.score}"))
     print()
     print("Commands:")
+    print("  guest - use a guest account")
     print("  u     - upvote logo")
     print("  d     - downvote logo")
 
@@ -69,10 +83,15 @@ def performCheckout(user, products, deposit, session, transfers):
 
     # The user has enough money and the transaction is going to be executed
     else:
-        user.balance = resulting_balance
+        if user.name == "guest":
+            user.balance = 0
+        else:
+            user.balance = resulting_balance
 
         # If cash has been deposited, we record a kas mutation
-        if deposit > 0:
+        if user.name == "guest": # Guests always deposit totalPrice
+            session.add( KasMutatie(mutatiesoort=KasMutatieSoort.storting, user_id=user.id, bedrag=totalPrice) )
+        elif deposit > 0:
             session.add( KasMutatie(mutatiesoort=KasMutatieSoort.storting, user_id=user.id, bedrag=deposit) )
 
         # If products have been bought, we record a voorraad mutation
@@ -167,7 +186,7 @@ def main(Session):
                     deposit += input_deposit()
 
                 # User wants to transfer money
-                elif scanned.lower() == "bank":
+                elif scanned.lower() == "bank" and users[0].name != "guest":
                     session.flush()
                     transactionNo = session.query(BankStorting).filter(BankStorting.user_id==users[0].id).count()
                     code = f"BAR-{users[0].id}-{transactionNo}"
