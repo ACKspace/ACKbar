@@ -26,11 +26,12 @@ def purchaseScreen(users, products, deposit, transfers, total, font):
         print(f"Hello guest!")
     print(f"")
     print(info("Commands:"))
-    print(info("  accept  - Accept transaction"))
+    print(info("  cash    - Deposit with cash"))
     if users[0].name != "guest":
         print(info("  bank    - Deposit with wire transfer"))
-    print(info("  cash    - Deposit with cash"))
+    print(info("  ------"))
     print(info("  cancel  - Cancel transaction"))
+    print(info("  accept  - Accept transaction"))
     print("")
     if users[0].name != "guest":
         print(f"{'balance' : <25} {(users[0].balance/100):6.2f}")
