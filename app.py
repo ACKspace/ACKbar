@@ -59,6 +59,7 @@ def startScreen(font):
     print(info(f"{font.name} {font.score}"))
     print()
     print("Commands:")
+    print("  guest - use a guest account")
     print("  u     - upvote logo")
     print("  d     - downvote logo")
 
