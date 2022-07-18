@@ -7,7 +7,23 @@ from database import Session, engine
 import os, time
 from console import clearConsole, succes, question, info, warning, error
 
+Base.metadata.create_all(bind=engine)
+
 with Session() as session:
+    # Assure admin
+    users = []
+    for userQuery in session.query(User).filter(User.name=="Bestuur"):
+        users.append(userQuery)
+
+    # We could not find this user in our DB
+    if len(users) < 1:
+        admin = User(name="Bestuur", balance=0)
+        users.append(admin)
+        session.add(admin)
+        session.commit()
+    else:
+        admin = users[0]
+
     som = 0
     for kasmutatie in session.query(KasMutatie):
         som += kasmutatie.bedrag
@@ -20,8 +36,7 @@ with Session() as session:
         print(f"Er ligt {correctie*0.01:.2f} te veel in de kas!")
     afromen = int(float(input("Hoeveel geld afromen: ")) * 100)
 
-    user = session.query(User).filter(User.name=="Bestuur")
 
-    session.add(KasMutatie(mutatiesoort=KasMutatieSoort.correctie, user_id=user[0].id, bedrag=correctie))
-    session.add(KasMutatie(mutatiesoort=KasMutatieSoort.afroming, user_id=user[0].id, bedrag=-afromen))
+    session.add(KasMutatie(mutatiesoort=KasMutatieSoort.correctie, user_id=admin.id, bedrag=correctie))
+    session.add(KasMutatie(mutatiesoort=KasMutatieSoort.afroming, user_id=admin.id, bedrag=-afromen))
     session.commit()
