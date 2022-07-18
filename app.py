@@ -6,7 +6,7 @@ from models import VoorraadMutatie, VoorraadMutatieSoort
 from sqlalchemy import func
 from database import Session, engine
 import os, time
-from console import clearConsole, succes, question, info, warning, error, input_yesno, input_deposit
+from console import clearConsole, succes, question, info, warning, error, input_yesno, input_currency
 
 
 
@@ -187,7 +187,7 @@ def main(Session):
 
                 # User wants to deposit money
                 if scanned.lower() in ["cash", "deposit"]:
-                    deposit += input_deposit()
+                    deposit += input_currency()
 
                 # User wants to transfer money
                 elif scanned.lower() == "bank" and users[0].name != "guest":
@@ -200,7 +200,7 @@ def main(Session):
                     print(f"Ten name van  -  Stichting ACKspace")
                     print(f"Omschrijving  -  {code}")
                     print()
-                    bedrag = input_deposit()
+                    bedrag = input_currency()
                     isTransfer = input_yesno("Confirm transfer?") == "y"
                     if isTransfer:
                         transfers.append([bedrag, code])
