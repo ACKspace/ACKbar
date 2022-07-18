@@ -26,12 +26,12 @@ def input_yesno(q):
         if answer == "n" or answer == "no":
             return "n"
 
-def input_deposit():
+def input_currency(prompt = "How much money do you want to deposit: "):
     full = 0
     cents = 0
     isValid = False
     while not isValid:
-        raw_money = input(question("How much money do you want to deposit: "))
+        raw_money = input(question(prompt))
         if "." in raw_money and len(raw_money.split(".")) == 2:
             full, cents = raw_money.split(".")
             try:
