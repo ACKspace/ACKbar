@@ -80,8 +80,8 @@ def performCheckout(user, products, deposit, session, transfers):
         resulting_balance += transfer[0]
 
     # Can the user afford this?
-    if resulting_balance < 0:
-        return False
+    if resulting_balance < 0 and user.name != "guest":
+        return resulting_balance
 
     # The user has enough money and the transaction is going to be executed
     else:
@@ -117,7 +117,7 @@ def performCheckout(user, products, deposit, session, transfers):
 
         # We finalize the transaction
         session.commit()
-        return True
+        return resulting_balance
 
 
 
@@ -208,10 +208,14 @@ def main(Session):
 
                 # User wants to finish transaction
                 elif scanned.lower() in ["accept", "checkout"]:
-                    if performCheckout(users[0], products, deposit, session,transfers):
+                    resulting_balance = performCheckout(users[0], products, deposit, session,transfers)
+                    if resulting_balance >= 0:
                         print(succes("Transaction confirmed!"))
                         time.sleep(2)
                         userBusy = False
+                    elif users[0].name == "guest":
+                        print(succes(f"Transaction confirmed!\nPlease deposit {(-total/100):1.2f}, thank you."))
+                        time.sleep(10)
                     else:
                         print(warning(f"Not enough funds! Check the tab."))
                         time.sleep(1)
