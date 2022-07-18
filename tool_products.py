@@ -10,7 +10,20 @@ Base.metadata.create_all(bind=engine)
 while True:
     with Session() as session:
         clearConsole()
-        admin = session.query(User).filter(User.name=="Bestuur")[0]
+
+        # Assure admin
+        users = []
+        for userQuery in session.query(User).filter(User.name=="Bestuur"):
+            users.append(userQuery)
+
+        # We could not find this user in our DB
+        if len(users) < 1:
+            admin = User(name="Bestuur", balance=0)
+            users.append(admin)
+            session.add(admin)
+            session.commit()
+        else:
+            admin = users[0]
 
         products = session.query(Product)
         for product in products:

@@ -15,7 +15,7 @@ class User(Base):
     name = Column(String(30), nullable=False, unique=True)
     balance = Column(Integer, nullable=False)
     def __repr__(self):
-        return f"User(id={self.id!r}, name={self.name!r}, barcode={self.barcode!r}, balance={self.balance!r}"
+        return f"User(id={self.id!r}, name={self.name!r}, balance={self.balance!r}"
 
 class Product(Base):
     __tablename__ = "product"
