@@ -3,7 +3,7 @@ from models import Base, Product, Barcode, User
 from models import VoorraadMutatie, VoorraadMutatieSoort
 from sqlalchemy import func
 from database import Session, engine
-from console import clearConsole, succes, question, info, warning, error, input_yesno, input_deposit
+from console import clearConsole, succes, question, info, warning, error, input_yesno, input_currency
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,10 +20,10 @@ while True:
         choice = int(input("Choice: "))
         if choice == 0:
             name = input("Name of new product?  ")
-            price = int(float(input("What is the price? ")) * 100)
+            price = input_currency("What is the price? ")
             newBarcode = input("New barcode is: ")
             inventory = int(input("How much items are you adding? "))
-            totalPrice = int(float(input("What was the total cost of these items? ")) * 100)
+            totalPrice = input_currency("What was the total cost of these items? ")
             product = Product(name=name, price=price)
             session.add(product)
             session.flush()
@@ -52,7 +52,7 @@ while True:
             print()
 
             if input_yesno("Do you wish to change the price?") == "y":
-                newPrice = int(float(input("What is the new price? ")) * 100)
+                newPrice = input_currency("What is the new price? ")
                 chosenProduct.price = newPrice
 
             if input_yesno("Are you adding a new barcode?") == "y":
@@ -62,7 +62,7 @@ while True:
             if input_yesno("Are you adding inventory?") == "y":
                 addInventory = int(input("How much items are you adding? "))
                 currentInventory += addInventory
-                totalPrice = int(float(input("What was the total cost of these items? "))*100)
+                totalPrice = input_currency("What was the total cost of these items? ")
                 voorraadmutatie = VoorraadMutatie(
                     mutatiesoort=VoorraadMutatieSoort.koop,
                     product_id=chosenProduct.id,
